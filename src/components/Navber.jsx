@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const Navber = () => {
     return (
-        <div className="navbar bg-base-100 bg-stone-400 ">
+        <div className="navbar fixed z-10  bg-opacity-60  bg-stone-500 ">
         <div className="navbar-start">
          <img src="https://i.postimg.cc/k4YVdLXG/7515257.jpg" className="w-[60px] h-[60px] rounded-lg" alt=""  />
           <a className="btn btn-ghost text-xl">QuickCart</a>
