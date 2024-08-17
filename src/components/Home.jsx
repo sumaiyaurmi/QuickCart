@@ -5,9 +5,10 @@ import Banner from './Banner';
 const Home = () => {
     return (
         <div>
-            <Navber></Navber>
+             <Navber></Navber>
 <Banner></Banner>
-            <Footer></Footer>
+<Footer></Footer>
+
         </div>
     );
 };
