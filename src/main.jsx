@@ -7,6 +7,7 @@ import AuthProvider from "./Providers/AuthProvider";
 import { Toaster } from "react-hot-toast";
 import Root from "./Providers/Root";
 import SignUp from "./authentication/SignUp";
+import Login from "./authentication/Login";
 
 const router = createBrowserRouter([
   {
@@ -19,10 +20,10 @@ const router = createBrowserRouter([
         element: <Home></Home>,
       },
      
-      // {
-      //   path: "/login",
-      //   // element: <Login></Login>,
-      // },
+      {
+        path: "/login",
+        element: <Login></Login>,
+      },
       {
         path: "/sign-up",
         element: <SignUp></SignUp>,
