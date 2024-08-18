@@ -13,29 +13,25 @@ const AllProducts = () => {
   useEffect(() => {
     const getData = async () => {
       const { data } = await axios.get(
-        `http://localhost:5000/products?page=${currentPage}&size=${itemsPerPage}`
+        `http://localhost:5000/products?page=${currentPage}&size=${itemsPerPage}&search=${search}`
       );
       setAllProducts(data);
     //   console.log(data);
     };
     getData();
-  }, [currentPage,itemsPerPage]);
+  }, [currentPage,itemsPerPage,search]);
   useEffect(() => {
     const getCount = async () => {
       const { data } = await axios.get(
-        `http://localhost:5000/products-count`
+        `http://localhost:5000/products-count?search=${search}`
       );
       setCount(data.count)
     //   console.log(data);
     };
     getCount();
-  }, []);
+  }, [search]);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    const searchText = e.target.search.value;
-    setSearch(searchText);
-  };
+ 
 
   const numberOfPages = Math.ceil(count / itemsPerPage)
   const pages = [...Array(numberOfPages).keys()].map(element => element + 1)
@@ -46,19 +42,28 @@ const AllProducts = () => {
     setCurrentPage(value)
   }  
 
+//   handle search
+const handleSearch = (e) => {
+    e.preventDefault();
+    const searchText = e.target.search.value;
+    setSearch(searchText);
+  };
+  console.log(search)
+
 
   return (
     <div className="my-10 space-y-4">
        <form
-        className=" flex justify-center items-center"
+        className=" flex justify-center items-center py-4"
         onSubmit={handleSearch}
       >
         <input
           type="text"
           name="search"
-          className="input bg-slate-300 input-bordered"
+          placeholder="enter "
+          className="input bg-slate-100 input-bordered"
         />
-        <input type="submit" value={"Search"} className="btn ml-2 bg-stone-500 text-white" />
+        <input type="submit" value={"Search"} className="btn ml-1 bg-stone-500 text-white" />
       </form>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-12 my-10 ">
          {allProducts.map((product,index) => (
