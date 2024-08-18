@@ -3,29 +3,66 @@ import { useEffect, useState } from "react";
 
 const AllProducts = () => {
   const [allProducts, setAllProducts] = useState([]);
+  const [search, setSearch] = useState("");
+  const [itemsPerPage, setItemsPerPage] = useState(9)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [count, setCount] = useState(0)
+
+
 
   useEffect(() => {
     const getData = async () => {
       const { data } = await axios.get(
-        `http://localhost:5000/products`
+        `http://localhost:5000/products?page=${currentPage}&size=${itemsPerPage}`
       );
       setAllProducts(data);
-      console.log(data);
+    //   console.log(data);
     };
     getData();
+  }, [currentPage,itemsPerPage]);
+  useEffect(() => {
+    const getCount = async () => {
+      const { data } = await axios.get(
+        `http://localhost:5000/products-count`
+      );
+      setCount(data.count)
+    //   console.log(data);
+    };
+    getCount();
   }, []);
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const searchText = e.target.search.value;
+    setSearch(searchText);
+  };
+
+  const numberOfPages = Math.ceil(count / itemsPerPage)
+  const pages = [...Array(numberOfPages).keys()].map(element => element + 1)
+
+  //  handle pagination button
+  const handlePaginationButton = value => {
+    console.log(value)
+    setCurrentPage(value)
+  }  
+
+
   return (
-    <div className="my-6 space-y-4">
-      {/* <div>
-         <button className="btn mb-2 bg-orange-400 hover:text-white hover:bg-orange-500"
-          onClick={()=>setAsc(!asc)}>
-           {            asc? 'price: Descending Order' : "Price: Ascending Order"}
-         </button>
-        </div> */}
+    <div className="my-10 space-y-4">
+       <form
+        className=" flex justify-center items-center"
+        onSubmit={handleSearch}
+      >
+        <input
+          type="text"
+          name="search"
+          className="input bg-slate-300 input-bordered"
+        />
+        <input type="submit" value={"Search"} className="btn ml-2 bg-stone-500 text-white" />
+      </form>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-12 my-10 ">
          {allProducts.map((product,index) => (
-           <div key={index} className="card bg-base-100 w-96 shadow-xl">
+           <div key={index} className="card bg-base-100  shadow-xl">
            <figure>
              <img
                src={product.image}
@@ -50,13 +87,79 @@ const AllProducts = () => {
              </div>
              <div className="card-actions  justify-end">
                <div>
-               <span className="font-medium"> createdAt:</span> <p className=""> 🗓️ {product.createdAt}</p>
+               <span className="font-medium"> CreatedAt:</span> <p className=""> 🗓️ {product.createdAt}</p>
                </div>
              </div>
            </div>
          </div>
          ))}
        </div>
+
+          {/* Pagination Section */}
+     
+          <div className='flex justify-center pt-10'>
+        <button
+                  disabled={currentPage === 1}
+
+                  onClick={() => handlePaginationButton(currentPage - 1)}
+
+        className='px-4 py-2 mx-1 text-gray-700 disabled:text-gray-500 capitalize bg-gray-200 rounded-md disabled:cursor-not-allowed disabled:hover:bg-gray-200 disabled:hover:text-gray-500 hover:bg-stone-700  hover:text-white'>
+          <div className='flex items-center -mx-1'>
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              className='w-6 h-6 mx-1 rtl:-scale-x-100'
+              fill='none'
+              viewBox='0 0 24 24'
+              stroke='currentColor'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='2'
+                d='M7 16l-4-4m0 0l4-4m-4 4h18'
+              />
+            </svg>
+
+            <span className='mx-1'>previous</span>
+          </div>
+        </button>
+
+        {pages.map(btnNum => (
+          <button
+          onClick={() => handlePaginationButton(btnNum)}
+          key={btnNum}
+          className={`hidden ${
+            currentPage === btnNum ? 'bg-stone-700 text-white' : ''
+          } px-4 py-2 mx-1 transition-colors duration-300 transform  rounded-md sm:inline hover:bg-stone-700  hover:text-white`}
+        >
+            {btnNum}
+          </button>
+        ))}
+
+        <button
+         disabled={currentPage === numberOfPages}
+         onClick={() => handlePaginationButton(currentPage + 1)}
+        className='px-4 py-2 mx-1 text-gray-700 transition-colors duration-300 transform bg-gray-200 rounded-md hover:bg-stone-700 disabled:hover:bg-gray-200 disabled:hover:text-gray-500 hover:text-white disabled:cursor-not-allowed disabled:text-gray-500'>
+          <div className='flex items-center -mx-1'>
+            <span className='mx-1'>Next</span>
+
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              className='w-6 h-6 mx-1 rtl:-scale-x-100'
+              fill='none'
+              viewBox='0 0 24 24'
+              stroke='currentColor'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='2'
+                d='M17 8l4 4m0 0l-4 4m4-4H3'
+              />
+            </svg>
+          </div>
+        </button>
+      </div>
     </div>
   );
 };
